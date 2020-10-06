@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: nginx-tpl
+  name: nginx-tpl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx-tpl
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: nginx-tpl
+    spec:
+      containers:
+      - image: nginx
+        name: nginx
+        env:
+        - name: HOSTNAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        lifecycle:
+          postStart:
+            exec:
+              command:
+              - /bin/sh
+              - -c
+              - |
+                sed -i 's/<h1>Welcome to nginx!/& $(HOSTNAME)/g' /usr/share/nginx/html/index.html
